@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Test</title>
+</head>
+<style>
+    body{
+        margin: 0;
+        display: flex;
+        width: 100vw;
+        height: 100vh;
+        flex-wrap: wrap;
+    }
+
+    #container {
+        margin: auto;
+        width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    #searchBar {
+        margin: auto;
+    }
+
+    #newPhotoButton {
+        margin: auto;
+    }
+
+    img {
+        margin: auto;
+    }
+
+</style>
+<body>
+    <form>
+        <input type="text" id="searchBar" />
+        <input type="submit" id="submitButton" value="Search">
+    </form>
+    <button id="newPhotoButton">New Dog Photo</button>
+    <div id="container">
+        <img src="#" />
+    </div>
+    
+
+
+    <script>
+        const img = document.querySelector('img');
+        const container = document.getElementById('container');
+        const newPhotoButton = document.getElementById('newPhotoButton');
+        newPhotoButton.addEventListener('click', getNewPhoto);
+        const searchBar = document.getElementById('searchBar');
+        const submitButton = document.getElementById('submitButton');
+        submitButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            console.log(searchBar.value);
+            searchGifs(searchBar.value);
+            searchBar.value = '';
+        });
+
+        function searchGifs (searchTerm) {
+            let limit = 2;
+            let url = `https://api.giphy.com/v1/gifs/search?api_key=L3kMyjqKyGUr7naJi7H4cl0dQ2K6Ikt2&q=${searchTerm}&limit=${limit}`;
+            fetch(url, {mode: 'cors'})
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(response) {
+                while (container.firstChild) {
+                    container.removeChild(container.lastChild);
+                }
+                let photoArray = response.data;
+                photoArray.forEach((photo) => {
+                    let newImage = document.createElement('img');
+                    newImage.src=photo.images.original.url;
+                    container.appendChild(newImage);
+                })
+            });
+        }
+
+        function getNewPhoto () {
+            fetch('https://api.giphy.com/v1/gifs/translate?api_key=L3kMyjqKyGUr7naJi7H4cl0dQ2K6Ikt2&s=dogs', {mode: 'cors'})
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(response) {
+                img.src = response.data.images.original.url;
+            });
+        }
+
+
+        getNewPhoto();
+    </script>
+</body>
+</html>
+<!-- 
+`https://api.giphy.com/v1/gifs/translate?api_key=L3kMyjqKyGUr7naJi7H4cl0dQ2K6Ikt2&q=${searchTerm}&limit=5` -->
+
+
+<!-- this is the old one
+'https://api.giphy.com/v1/gifs/translate?api_key=L3kMyjqKyGUr7naJi7H4cl0dQ2K6Ikt2&s=dogs' -->
