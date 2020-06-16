@@ -8,17 +8,33 @@
 <style>
     body{
         margin: 0;
-        display: flex;
+        display: grid;
+        grid-template-rows: 8% 1fr;
         width: 100vw;
         height: 100vh;
-        flex-wrap: wrap;
+        overflow-x: hidden;
+        overflow-y: scroll;
+        background-color: black;
     }
 
     #container {
+        grid-row-start: 2;
+        grid-row-end: 3;
         margin: auto;
         width: 100%;
         display: flex;
         flex-wrap: wrap;
+    }
+
+    #form-container {
+        grid-row-start: 1;
+        grid-row-end: 2;
+        display: flex;
+        height: 100%;
+    }
+
+    form {
+        margin: auto;
     }
 
     #searchBar {
@@ -31,15 +47,21 @@
 
     img {
         margin: auto;
+        height: 180px;
+        box-shadow: 0px 0px 5px 5px rgba(255,255,255,0.75);
     }
 
 </style>
 <body>
-    <form>
-        <input type="text" id="searchBar" />
-        <input type="submit" id="submitButton" value="Search">
-    </form>
-    <button id="newPhotoButton">New Dog Photo</button>
+    <div id="form-container">
+        <form>
+            <input type="text" id="searchBar" placeholder="Search for a gif..."/>
+            <label for="numberOfResults"># of Results
+            <input type="number" id="numberOfResults" min="1" max="20" value="1" />
+            </label>
+            <input type="submit" id="submitButton" value="Search">
+        </form>
+    </div>
     <div id="container">
         <img src="#" />
     </div>
@@ -49,20 +71,18 @@
     <script>
         const img = document.querySelector('img');
         const container = document.getElementById('container');
-        const newPhotoButton = document.getElementById('newPhotoButton');
-        newPhotoButton.addEventListener('click', getNewPhoto);
         const searchBar = document.getElementById('searchBar');
+        const numberOfGifs = document.getElementById('numberOfResults');
         const submitButton = document.getElementById('submitButton');
         submitButton.addEventListener('click', (e) => {
             e.preventDefault();
-            console.log(searchBar.value);
-            searchGifs(searchBar.value);
+            searchGifs(searchBar.value, numberOfGifs.value);
             searchBar.value = '';
+            numberOfGifs.value = '1';
         });
 
-        function searchGifs (searchTerm) {
-            let limit = 2;
-            let url = `https://api.giphy.com/v1/gifs/search?api_key=L3kMyjqKyGUr7naJi7H4cl0dQ2K6Ikt2&q=${searchTerm}&limit=${limit}`;
+        function searchGifs (searchTerm, numberOfResults) {
+            let url = `https://api.giphy.com/v1/gifs/search?api_key=L3kMyjqKyGUr7naJi7H4cl0dQ2K6Ikt2&q=${searchTerm}&limit=${numberOfResults}`;
             fetch(url, {mode: 'cors'})
             .then(function(response) {
                 return response.json();
@@ -95,9 +115,3 @@
     </script>
 </body>
 </html>
-<!-- 
-`https://api.giphy.com/v1/gifs/translate?api_key=L3kMyjqKyGUr7naJi7H4cl0dQ2K6Ikt2&q=${searchTerm}&limit=5` -->
-
-
-<!-- this is the old one
-'https://api.giphy.com/v1/gifs/translate?api_key=L3kMyjqKyGUr7naJi7H4cl0dQ2K6Ikt2&s=dogs' -->
